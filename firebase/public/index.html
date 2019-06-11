@@ -16,11 +16,13 @@
     <script defer src="/assets/jquery-3.3.1.slim.min.js"></script>
     <script defer src="/assets/popper.min.js"></script>
     <script defer src="/assets/bootstrap.min.js"></script>
-
+    <script defer src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script defer src="/assets/app.js"></script>
+
     <link rel="stylesheet" href="/assets/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/main.css">
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300&display=swap">
+    <link rel="canonical" href="https://remove-gplus-links.web.app/">
 </head>
 <body class="text-center">
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
@@ -35,7 +37,7 @@
         </div>
     </header>
 
-    <main role="main" class="inner cover">
+    <main id="app" role="main" class="inner cover">
         <h1 class="cover-heading">Remove Google+ from Contacts</h1>
         <p class="lead">
             Last few years <strong>Google+</strong> was injected into your
@@ -47,8 +49,32 @@
             <strong>Clean it now!</strong>
         </p>
         <p class="lead">
-            <a href="#" class="btn btn-lg btn-secondary">Learn more</a>
+            <button v-on:click="signIn" class="btn btn-lg btn-secondary">Login to Google</button>
         </p>
+        <table class="table">
+            <tr>
+                <td>
+                    X
+                </td>
+                <th>
+                    Jméno
+                </th>
+                <th>
+                    G+ profile URL
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" id="xyz" checked>
+                </td>
+                <td>
+                    <label for="xyz">Jakub Bouček</label>
+                </td>
+                <td class="condensed light">
+                    http://www.google.com/profiles/113578787445824007742
+                </td>
+            </tr>
+        </table>
     </main>
 
     <footer class="mastfoot mt-auto">
@@ -57,8 +83,9 @@
                 With ❤️
                 <a href="https://www.jakub-boucek.cz/" target="blank" rel="noopener">Jakub Bouček</a>
                 on
-                <a href="https://www.facebook.com/events/2056681764635298/" target="blank"
-                   rel="noopener">MicroHackathon</a>
+                <a href="https://www.facebook.com/events/2056681764635298/" target="blank" rel="noopener">
+                    MicroHackathon
+                </a>
                 @
                 <a href="https://techheaven.org/#hub" target="blank" rel="noopener">TechHeaven Hub 2.0</a>
             </p>
