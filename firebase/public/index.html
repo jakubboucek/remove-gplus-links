@@ -49,12 +49,13 @@
             <strong>Clean it now!</strong>
         </p>
         <p class="lead">
-            <button v-on:click="signIn" class="btn btn-lg btn-secondary">Login to Google</button>
+            <button v-if="!signed" v-on:click="signIn" class="btn btn-lg btn-secondary"><div class="loader" v-if="loading"></div> Login to Google</button>
+            <button v-if="signed && !contacts.length" v-on:click="loadContacts" class="btn btn-lg btn-secondary"><div class="loader" v-if="loading"></div> Load Contacts with G+ profile</button>
         </p>
-        <table class="table">
+        <table class="table" v-if="contacts.length">
             <tr>
                 <td>
-                    X
+
                 </td>
                 <th>
                     Jméno
@@ -63,15 +64,15 @@
                     G+ profile URL
                 </th>
             </tr>
-            <tr>
+            <tr v-for="contact in contacts">
                 <td>
                     <input type="checkbox" id="xyz" checked>
                 </td>
                 <td>
-                    <label for="xyz">Jakub Bouček</label>
+                    <label for="xyz">{{ contact.name }}</label>
                 </td>
                 <td class="condensed light">
-                    http://www.google.com/profiles/113578787445824007742
+                    {{ contact.url }}
                 </td>
             </tr>
         </table>

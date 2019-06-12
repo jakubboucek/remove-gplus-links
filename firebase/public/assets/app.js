@@ -1,39 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const scriptId = "MPvwfpzrIThutAMpQ8yrDkl_VCDNGuL86";
     const permissions = [
         'https://www.google.com/m8/feeds'
     ];
 
-    const app = firebase.app();
-    let token;
-
-    const auth = () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        permissions.forEach((perm) => provider.addScope(perm));
-        firebase.auth().signInWithPopup(provider).then((response) => {
-            token = response.credential.accessToken;
-            console.log(token);
-        });
-
-    };
-
-    const vue = new Vue({
-        el: '#app',
-        data: {},
-        methods: {
-            signIn: auth
+    const app = new Vue(
+        {
+            el: '#app',
+            data: {
+                loading: true,
+                signed: false,
+                contactApi: null,
+                contacts: [],
+            },
+            methods: {
+                signIn: function() {
+                    const vue = this;
+                    vue.loading = true;
+                    const auth = new AppLogin(permissions);
+                    auth.login().then(token => {
+                        const gs = new GoogleScript(scriptId, token);
+                        vue.contactApi = new Contacts(gs);
+                        vue.signed = true;
+                    }).catch(error => {
+                        throw error;
+                    }).finally(()=>{
+                        vue.loading = false;
+                    });
+                },
+                loadContacts: function () {
+                    const vue = this;
+                    vue.loading = true;
+                    vue.contactApi.getAffectedContacts().then(contacts=>{
+                        vue.contacts = contacts;
+                    }).catch(error => {
+                        throw error;
+                    }).finally(()=>{
+                        vue.loading = false;
+                    });
+                }
+            }
         }
-    });
-
-
-    const gs = new GoogleScript(
-        "MPvwfpzrIThutAMpQ8yrDkl_VCDNGuL86",
-        "**REDACTED**"
     );
-    let contacts = new Contacts(gs);
 
-    console.log(contacts.getAffectedContacts());
-
+    app.loading = false;
 });
+
+class AppLogin {
+    constructor(permissions) {
+        this.permissions = permissions;
+        this.isLogged = false;
+    }
+
+    async login() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        this.permissions.forEach(perm => provider.addScope(perm));
+
+        const response = await firebase.auth().signInWithPopup(provider);
+
+        this.isLogged = true;
+        return response.credential.accessToken;
+    }
+}
 
 class Contacts {
     constructor(googleScript) {
@@ -82,5 +110,14 @@ class GoogleScript {
         } else {
             throw body;
         }
+    }
+
+    async test() {
+        const token = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+        const response = await this.run("checkConnectivity", [token]);
+        if (response !== token) {
+            throw new Error("Connection to GS API failed - connectivity return another token (cache?): " + response + " instead of " + token);
+        }
+        return true;
     }
 }
